@@ -18,4 +18,4 @@ jobs:
           gh release view "$tag" >/dev/null 2>&1 && exit 0
           gh release create "$tag" data/predictions.csv \
             --title "FootInsights settled predictions, $(date -u +'%B %Y')" \
-            --notes "Every prediction FootInsights published and settled up to $(date -u +%F). CC BY 4.0. Source: https://footinsights.com/data/"
+            --notes "Every call FootInsights published and settled up to $(date -u +%F): one row per market of a match, with the match probabilities, the model version and the result. Append-only, misses included. CC BY 4.0. Column reference: https://footinsights.com/data/"
