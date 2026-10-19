@@ -13,6 +13,7 @@ included.
 - Live file, refreshed with every pipeline run: https://footinsights.com/data/predictions.csv
 - This repository: a weekly copy in [`data/predictions.csv`](data/predictions.csv) and a monthly release.
 - Licence: [CC BY 4.0](LICENSE). Cite as in [`CITATION.cff`](CITATION.cff).
+- Kaggle mirror, refreshed weekly: https://www.kaggle.com/datasets/footinsights/football-predictions-settled
 - DOI, all versions: [10.5281/zenodo.23471483](https://doi.org/10.5281/zenodo.23471483); each monthly release gets its own on Zenodo.
 
 The track record and calibration of the same rows: https://footinsights.com/track-record/
