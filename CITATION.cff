@@ -8,6 +8,11 @@ authors:
 url: https://footinsights.com/data/
 repository-code: https://github.com/koldz/footinsights-data
 license: CC-BY-4.0
+doi: 10.5281/zenodo.23471483
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23471483
+    description: The concept DOI, resolving to the latest monthly release
 keywords:
   - football
   - soccer
