@@ -6,7 +6,7 @@ authors:
   - name: FootInsights
     website: https://footinsights.com
 url: https://footinsights.com/data/
-repository-code: https://github.com/koldz/footinsights-data
+repository-code: https://github.com/FootInsights/footinsights-data
 license: CC-BY-4.0
 doi: 10.5281/zenodo.23471483
 identifiers:
