@@ -1,0 +1,11 @@
+{
+  "title": "FootInsights settled football predictions",
+  "id": "footinsights/football-predictions-settled",
+  "licenses": [{ "name": "CC-BY-4.0" }],
+  "resources": [
+    {
+      "path": "predictions.csv",
+      "description": "Every prediction FootInsights published and settled, one row per call"
+    }
+  ]
+}

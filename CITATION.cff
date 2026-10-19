@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: FootInsights settled football predictions
+message: If you use this dataset, please cite it as below.
+type: dataset
+authors:
+  - name: FootInsights
+    website: https://footinsights.com
+url: https://footinsights.com/data/
+repository-code: https://github.com/koldz/footinsights-data
+license: CC-BY-4.0
+keywords:
+  - football
+  - soccer
+  - predictions
+  - probabilities
+  - calibration
+  - betting odds
