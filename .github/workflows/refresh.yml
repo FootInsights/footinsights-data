@@ -51,7 +51,7 @@ jobs:
           pip install -q kaggle
           check() {
             echo "$1"
-            if echo "$1" | grep -qi "error"; then
+            if echo "$1" | grep -qiE "error|invalid"; then
               echo "::error::Kaggle rejected the update; see the output above"
               exit 1
             fi
@@ -63,7 +63,22 @@ jobs:
           else
             echo "CSV unchanged; no new Kaggle version"
           fi
-          check "$(kaggle datasets metadata --update -p data "$KAGGLE_DATASET" 2>&1)"
+          # The settings endpoint rejects the licence name the create endpoint
+          # accepted ("You've specified an invalid license"), so the update
+          # carries the licence exactly as the server reports it.
+          srv=$(mktemp -d)
+          check "$(kaggle datasets metadata "$KAGGLE_DATASET" -p "$srv" 2>&1)"
+          python3 - "$srv" <<'PY'
+          import json, os, sys
+          server = json.load(open(os.path.join(sys.argv[1], "dataset-metadata.json")))
+          ours = json.load(open("data/dataset-metadata.json"))
+          print("server licences:", server.get("licenses"))
+          if server.get("licenses"):
+              ours["licenses"] = server["licenses"]
+          os.makedirs("meta", exist_ok=True)
+          json.dump(ours, open("meta/dataset-metadata.json", "w"))
+          PY
+          check "$(kaggle datasets metadata --update -p meta "$KAGGLE_DATASET" 2>&1)"
       # The Hub skips a commit when nothing changed, so a quiet week costs
       # nothing. The dataset card lives in hf/README.md.
       - name: Push to Hugging Face
