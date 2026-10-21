@@ -25,19 +25,25 @@ jobs:
         run: |
           curl -fsSL https://footinsights.com/data/predictions.csv -o data/predictions.csv
           test -s data/predictions.csv
+      # GitHub switches off the schedules of a public repository after 60
+      # days without a commit, and the summer break is longer than that, so
+      # every run leaves a dated heartbeat even when the CSV did not move.
+      # It lives outside data/ so the Kaggle upload never sees it.
       - name: Commit if changed
         id: commit
         run: |
           git config user.name "footinsights-data"
           git config user.email "support@footinsights.com"
-          git add data/predictions.csv
-          if git diff --cached --quiet; then
+          date -u +%F > .github/last-refresh
+          git add data/predictions.csv .github/last-refresh
+          if git diff --cached --quiet -- data/predictions.csv; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            exit 0
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+          git diff --cached --quiet && exit 0
           git commit -m "data: refresh $(date -u +%F)"
           git push
-          echo "changed=true" >> "$GITHUB_OUTPUT"
       # The Kaggle CLI prints server-side errors ("Dataset version creation
       # error: ...") and still exits 0, so every output is checked by hand.
       # A dataset created on the site from a remote URL cannot take files
@@ -68,10 +74,21 @@ jobs:
               exit 1
             fi
           }
+          # The legacy CLI first; if Kaggle ever retires its endpoints the
+          # current CLI takes over (without the column descriptions, which
+          # the site keeps from version to version anyway).
+          upload() {
+            out=$("$legacy" datasets "$@" 2>&1) || true
+            if echo "$out" | grep -qiE "error|invalid|traceback|unauthorized|not found"; then
+              echo "legacy CLI failed, retrying with the current one:"; echo "$out"
+              out=$(kaggle datasets "$@" 2>&1) || true
+            fi
+            check "$out"
+          }
           if ! kaggle datasets status "$KAGGLE_DATASET" >/dev/null 2>&1; then
-            check "$("$legacy" datasets create -p data --public --dir-mode zip 2>&1)"
+            upload create -p data --public --dir-mode zip
           elif [ "$CHANGED" = "true" ] || [ "$FORCE" = "true" ]; then
-            check "$("$legacy" datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)"
+            upload version -p data -m "refresh $(date -u +%F)" --dir-mode zip
           else
             echo "CSV unchanged; no new Kaggle version"
           fi
