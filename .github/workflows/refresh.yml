@@ -64,25 +64,30 @@ jobs:
             echo "CSV unchanged; no new Kaggle version"
           fi
           # The settings endpoint rejects the licence name the create endpoint
-          # accepted ("You've specified an invalid license"), so the update
-          # carries the licence exactly as the server reports it.
+          # accepted ("You've specified an invalid license"), and the metadata
+          # download does not say how the server names it, so the update is
+          # tried with each spelling of CC BY 4.0 until one is accepted.
           srv=$(mktemp -d)
           check "$(kaggle datasets metadata "$KAGGLE_DATASET" -p "$srv" 2>&1)"
-          python3 - "$srv" <<'PY'
-          import json, os, sys
-          server = json.load(open(os.path.join(sys.argv[1], "dataset-metadata.json")))
+          echo "server metadata:"; cat "$srv/dataset-metadata.json"; echo
+          mkdir -p meta
+          ok=0
+          for lic in "CC-BY-4.0" "CC BY 4.0" "cc-by-4.0" "CC_BY_4_0" "Attribution 4.0 International (CC BY 4.0)"; do
+            python3 - "$lic" <<'PY'
+          import json, sys
           ours = json.load(open("data/dataset-metadata.json"))
-          print("server licences:", server.get("licenses"))
-          if server.get("licenses"):
-              ours["licenses"] = server["licenses"]
-          os.makedirs("meta", exist_ok=True)
+          ours["licenses"] = [{"name": sys.argv[1]}]
           json.dump(ours, open("meta/dataset-metadata.json", "w"))
           PY
-          check "$(kaggle datasets metadata --update -p meta "$KAGGLE_DATASET" 2>&1)"
+            out=$(kaggle datasets metadata --update -p meta "$KAGGLE_DATASET" 2>&1)
+            echo "licence '$lic': $(echo "$out" | tail -1)"
+            if ! echo "$out" | grep -qiE "error|invalid"; then ok=1; break; fi
+          done
+          [ "$ok" = 1 ] || { echo "::error::Kaggle rejected every licence spelling"; exit 1; }
       # The Hub skips a commit when nothing changed, so a quiet week costs
       # nothing. The dataset card lives in hf/README.md.
       - name: Push to Hugging Face
-        if: env.HF_TOKEN != ''
+        if: ${{ !cancelled() && env.HF_TOKEN != '' }}
         run: |
           pip install -q huggingface_hub
           python - <<'PY'
