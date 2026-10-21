@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: "17 6 * * 1" # Mondays, 06:17 UTC
   workflow_dispatch:
+    inputs:
+      force_version:
+        description: "Create a Kaggle version even if the CSV did not change"
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -47,8 +52,15 @@ jobs:
         if: env.KAGGLE_KEY != ''
         env:
           CHANGED: ${{ steps.commit.outputs.changed }}
+          FORCE: ${{ inputs.force_version }}
         run: |
+          # Two CLIs on purpose. The current one (2.x) is the only one whose
+          # metadata update carries the update frequency, sources and cover,
+          # but its version/create path drops the column descriptions; the
+          # legacy 1.6.17 still sends them, so it uploads the file.
           pip install -q kaggle
+          python -m venv "$RUNNER_TEMP/k1" && "$RUNNER_TEMP/k1/bin/pip" install -q "kaggle==1.6.17"
+          legacy="$RUNNER_TEMP/k1/bin/kaggle"
           check() {
             echo "$1"
             if echo "$1" | grep -qiE "error|invalid"; then
@@ -57,9 +69,9 @@ jobs:
             fi
           }
           if ! kaggle datasets status "$KAGGLE_DATASET" >/dev/null 2>&1; then
-            check "$(kaggle datasets create -p data --public --dir-mode zip 2>&1)"
-          elif [ "$CHANGED" = "true" ]; then
-            check "$(kaggle datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)"
+            check "$("$legacy" datasets create -p data --public --dir-mode zip 2>&1)"
+          elif [ "$CHANGED" = "true" ] || [ "$FORCE" = "true" ]; then
+            check "$("$legacy" datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)"
           else
             echo "CSV unchanged; no new Kaggle version"
           fi
