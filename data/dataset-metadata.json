@@ -3,12 +3,118 @@
   "id": "footinsights/football-predictions-settled",
   "subtitle": "Every pre-match probability FootInsights published, settled against final score",
   "description": "Every pre-match probability FootInsights (https://footinsights.com) has published since August 2026, settled against the final score. One row per settled call: a market of a match (the model's 1X2, double chance, over/under 1.5/2.5/3.5, both-teams-to-score and correct-score calls, and the published tips), the call and what happened, the match's 1X2, over 2.5 and BTTS probabilities, the model's public version name and the settlement time. Append-only: nothing is edited or removed after publication, misses included.\n\nColumn reference: https://footinsights.com/data/\nLive file, refreshed with every pipeline run: https://footinsights.com/data/predictions.csv\nSource repository (weekly copy, monthly release): https://github.com/FootInsights/footinsights-data\nDOI, all versions: https://doi.org/10.5281/zenodo.23471483\nTrack record and calibration of the same rows: https://footinsights.com/track-record/\n\nLicence: CC BY 4.0. Cite as: FootInsights (2026). FootInsights settled football predictions. Zenodo. https://doi.org/10.5281/zenodo.23471483",
-  "keywords": ["football", "soccer", "sports", "betting", "probability", "forecasting", "model evaluation"],
-  "licenses": [{ "name": "CC-BY-4.0" }],
+  "keywords": [
+    "sports",
+    "football"
+  ],
+  "licenses": [
+    {
+      "name": "CC-BY-4.0"
+    }
+  ],
   "resources": [
     {
       "path": "predictions.csv",
-      "description": "Every prediction FootInsights published and settled, one row per call"
+      "description": "Every prediction FootInsights published and settled, one row per call: a market of a match, the call, the outcome, the match probabilities, the model version and the settlement time. Fields can be empty where a value was never recorded.",
+      "schema": {
+        "fields": [
+          {
+            "name": "kickoff_utc",
+            "type": "datetime",
+            "description": "Kick-off time, ISO 8601, UTC."
+          },
+          {
+            "name": "league",
+            "type": "string",
+            "description": "Competition name, e.g. Premier League."
+          },
+          {
+            "name": "home_team",
+            "type": "string",
+            "description": "Home team, full name."
+          },
+          {
+            "name": "away_team",
+            "type": "string",
+            "description": "Away team, full name."
+          },
+          {
+            "name": "home_goals",
+            "type": "integer",
+            "description": "Full-time home goals."
+          },
+          {
+            "name": "away_goals",
+            "type": "integer",
+            "description": "Full-time away goals."
+          },
+          {
+            "name": "market",
+            "type": "string",
+            "description": "Market. The model's calls: 1x2, dc (double chance), ou15/ou25/ou35 (over/under 1.5/2.5/3.5), btts, cs (correct score). The published tips: result, goals and both (the three tips frozen per match with their price), best (the Best Tip), banker and value (the Value Bet)."
+          },
+          {
+            "name": "predicted",
+            "type": "string",
+            "description": "Our call: home/draw/away, 1X/12/X2, over/under, yes/no, a scoreline, or market/selection for best and banker."
+          },
+          {
+            "name": "actual",
+            "type": "string",
+            "description": "What happened, same vocabulary as predicted."
+          },
+          {
+            "name": "correct",
+            "type": "boolean",
+            "description": "true when the call matched the outcome."
+          },
+          {
+            "name": "p_home",
+            "type": "number",
+            "description": "Published probability of a home win (0-1)."
+          },
+          {
+            "name": "p_draw",
+            "type": "number",
+            "description": "Published probability of a draw (0-1)."
+          },
+          {
+            "name": "p_away",
+            "type": "number",
+            "description": "Published probability of an away win (0-1)."
+          },
+          {
+            "name": "p_over25",
+            "type": "number",
+            "description": "Published probability of over 2.5 goals (0-1)."
+          },
+          {
+            "name": "p_btts",
+            "type": "number",
+            "description": "Published probability of both teams scoring (0-1)."
+          },
+          {
+            "name": "confidence",
+            "type": "number",
+            "description": "Model confidence in the main pick (0-1)."
+          },
+          {
+            "name": "model_version",
+            "type": "string",
+            "description": "Public name of the FootInsights model version that priced the match (e.g. v3.1); blank where a version has no public name."
+          },
+          {
+            "name": "settled_at",
+            "type": "datetime",
+            "description": "When the prediction was settled, ISO 8601, UTC."
+          },
+          {
+            "name": "match_url",
+            "type": "string",
+            "description": "Permanent URL of the match's prediction page."
+          }
+        ]
+      }
     }
   ]
 }

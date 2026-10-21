@@ -12,6 +12,8 @@ jobs:
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       KAGGLE_DATASET: footinsights/football-predictions-settled
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_DATASET: footinsights/football-predictions-settled
     steps:
       - uses: actions/checkout@v4
       - name: Download the open CSV
@@ -46,3 +48,21 @@ jobs:
             echo "::error::Kaggle rejected the update; see the output above"
             exit 1
           fi
+      # The Hub skips a commit when nothing changed, so a quiet week costs
+      # nothing. The dataset card lives in hf/README.md.
+      - name: Push to Hugging Face
+        if: env.HF_TOKEN != ''
+        run: |
+          pip install -q huggingface_hub
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          repo = os.environ["HF_DATASET"]
+          api.create_repo(repo, repo_type="dataset", exist_ok=True)
+          api.upload_file(path_or_fileobj="hf/README.md", path_in_repo="README.md",
+                          repo_id=repo, repo_type="dataset", commit_message="docs: dataset card")
+          api.upload_file(path_or_fileobj="data/predictions.csv", path_in_repo="predictions.csv",
+                          repo_id=repo, repo_type="dataset", commit_message="data: weekly refresh")
+          print("pushed", api.dataset_info(repo).sha)
+          PY
