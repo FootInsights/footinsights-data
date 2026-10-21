@@ -1,6 +1,9 @@
 {
   "title": "FootInsights settled football predictions",
   "id": "footinsights/football-predictions-settled",
+  "subtitle": "Every pre-match probability FootInsights published, settled against final score",
+  "description": "Every pre-match probability FootInsights (https://footinsights.com) has published since August 2026, settled against the final score. One row per settled call: a market of a match (the model's 1X2, double chance, over/under 1.5/2.5/3.5, both-teams-to-score and correct-score calls, and the published tips), the call and what happened, the match's 1X2, over 2.5 and BTTS probabilities, the model's public version name and the settlement time. Append-only: nothing is edited or removed after publication, misses included.\n\nColumn reference: https://footinsights.com/data/\nLive file, refreshed with every pipeline run: https://footinsights.com/data/predictions.csv\nSource repository (weekly copy, monthly release): https://github.com/FootInsights/footinsights-data\nDOI, all versions: https://doi.org/10.5281/zenodo.23471483\nTrack record and calibration of the same rows: https://footinsights.com/track-record/\n\nLicence: CC BY 4.0. Cite as: FootInsights (2026). FootInsights settled football predictions. Zenodo. https://doi.org/10.5281/zenodo.23471483",
+  "keywords": ["football", "soccer", "sports", "betting", "probability", "forecasting", "model evaluation"],
   "licenses": [{ "name": "CC-BY-4.0" }],
   "resources": [
     {

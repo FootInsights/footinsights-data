@@ -11,6 +11,7 @@ jobs:
     env:
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+      KAGGLE_DATASET: footinsights/football-predictions-settled
     steps:
       - uses: actions/checkout@v4
       - name: Download the open CSV
@@ -25,8 +26,23 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m "data: refresh $(date -u +%F)"
           git push
+      # The Kaggle CLI prints server-side errors ("Dataset version creation
+      # error: ...") and still exits 0, so the output is checked by hand.
+      # A dataset created on the site from a remote URL cannot take files
+      # from the API ("Incompatible Dataset Type"); once that one is deleted,
+      # the next run recreates the slug as a file dataset and versions it
+      # from then on.
       - name: Push to Kaggle
         if: env.KAGGLE_KEY != ''
         run: |
           pip install -q kaggle
-          kaggle datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip
+          if kaggle datasets status "$KAGGLE_DATASET" >/dev/null 2>&1; then
+            out=$(kaggle datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)
+          else
+            out=$(kaggle datasets create -p data --public --dir-mode zip 2>&1)
+          fi
+          echo "$out"
+          if echo "$out" | grep -qi "error"; then
+            echo "::error::Kaggle rejected the update; see the output above"
+            exit 1
+          fi
