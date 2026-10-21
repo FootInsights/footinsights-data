@@ -21,33 +21,49 @@ jobs:
           curl -fsSL https://footinsights.com/data/predictions.csv -o data/predictions.csv
           test -s data/predictions.csv
       - name: Commit if changed
+        id: commit
         run: |
           git config user.name "footinsights-data"
           git config user.email "support@footinsights.com"
           git add data/predictions.csv
-          git diff --cached --quiet && exit 0
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git commit -m "data: refresh $(date -u +%F)"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
       # The Kaggle CLI prints server-side errors ("Dataset version creation
-      # error: ...") and still exits 0, so the output is checked by hand.
+      # error: ...") and still exits 0, so every output is checked by hand.
       # A dataset created on the site from a remote URL cannot take files
-      # from the API ("Incompatible Dataset Type"); once that one is deleted,
-      # the next run recreates the slug as a file dataset and versions it
-      # from then on.
+      # from the API ("Incompatible Dataset Type"); if the slug is free the
+      # run creates it as a file dataset. A new version only when the CSV
+      # changed, so a manual run on a quiet day adds no version. The
+      # metadata update runs every time: it is what carries the file and
+      # column descriptions, the sources, the update frequency and the
+      # cover, and it does not create a version. Edits made on kaggle.com
+      # are overwritten by it; change data/dataset-metadata.json instead.
       - name: Push to Kaggle
         if: env.KAGGLE_KEY != ''
+        env:
+          CHANGED: ${{ steps.commit.outputs.changed }}
         run: |
           pip install -q kaggle
-          if kaggle datasets status "$KAGGLE_DATASET" >/dev/null 2>&1; then
-            out=$(kaggle datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)
+          check() {
+            echo "$1"
+            if echo "$1" | grep -qi "error"; then
+              echo "::error::Kaggle rejected the update; see the output above"
+              exit 1
+            fi
+          }
+          if ! kaggle datasets status "$KAGGLE_DATASET" >/dev/null 2>&1; then
+            check "$(kaggle datasets create -p data --public --dir-mode zip 2>&1)"
+          elif [ "$CHANGED" = "true" ]; then
+            check "$(kaggle datasets version -p data -m "refresh $(date -u +%F)" --dir-mode zip 2>&1)"
           else
-            out=$(kaggle datasets create -p data --public --dir-mode zip 2>&1)
+            echo "CSV unchanged; no new Kaggle version"
           fi
-          echo "$out"
-          if echo "$out" | grep -qi "error"; then
-            echo "::error::Kaggle rejected the update; see the output above"
-            exit 1
-          fi
+          check "$(kaggle datasets metadata --update -p data "$KAGGLE_DATASET" 2>&1)"
       # The Hub skips a commit when nothing changed, so a quiet week costs
       # nothing. The dataset card lives in hf/README.md.
       - name: Push to Hugging Face

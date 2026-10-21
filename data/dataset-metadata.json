@@ -116,5 +116,8 @@
         ]
       }
     }
-  ]
+  ],
+  "expectedUpdateFrequency": "weekly",
+  "userSpecifiedSources": "The live file at https://footinsights.com/data/predictions.csv, written by the FootInsights pipeline after every settled match and copied here every Monday from https://github.com/FootInsights/footinsights-data. Column reference: https://footinsights.com/data/. Archived monthly on Zenodo, DOI 10.5281/zenodo.23471483.",
+  "image": "../kaggle-cover.png"
 }
