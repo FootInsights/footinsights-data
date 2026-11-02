@@ -1,0 +1,30 @@
+{
+  "upload_type": "dataset",
+  "title": "FootInsights settled football predictions",
+  "creators": [{ "name": "FootInsights" }],
+  "description": "<p>Every pre-match prediction <a href=\"https://footinsights.com\">FootInsights</a> has published since August 2026, settled against the final score, across 60+ competitions from the Premier League, La Liga, Serie A, Bundesliga and the Champions League to MLS and Liga MX.</p><p>One row per settled call: a market of a match (1X2, double chance, over/under 1.5/2.5/3.5, both teams to score, correct score, and the published tips), the call and what happened, the match's 1X2, over 2.5 and both-teams-to-score probabilities, the model's public version name, the settlement time and the permanent URL of the match's prediction page.</p><p>Append-only: nothing is edited or removed after publication, misses included. Each monthly release is a snapshot of the file on the 1st; the concept DOI always resolves to the latest one.</p><ul><li>Column reference: <a href=\"https://footinsights.com/data/\">https://footinsights.com/data/</a></li><li>Live file: <a href=\"https://footinsights.com/data/predictions.csv\">https://footinsights.com/data/predictions.csv</a></li><li>Track record and calibration of the same rows: <a href=\"https://footinsights.com/track-record/\">https://footinsights.com/track-record/</a></li></ul>",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "language": "eng",
+  "keywords": [
+    "football",
+    "soccer",
+    "predictions",
+    "probabilities",
+    "calibration",
+    "betting odds",
+    "probabilistic forecasting",
+    "forecast evaluation",
+    "Brier score",
+    "sports analytics",
+    "open data",
+    "Premier League"
+  ],
+  "related_identifiers": [
+    { "identifier": "https://footinsights.com/data/", "relation": "isDocumentedBy", "resource_type": "other" },
+    { "identifier": "https://footinsights.com/track-record/", "relation": "isSupplementTo", "resource_type": "other" },
+    { "identifier": "https://huggingface.co/datasets/footinsights/football-predictions-settled", "relation": "isVariantFormOf", "resource_type": "dataset" },
+    { "identifier": "https://www.kaggle.com/datasets/footinsights/football-predictions-settled", "relation": "isVariantFormOf", "resource_type": "dataset" },
+    { "identifier": "https://www.kaggle.com/code/footinsights/notebook55d0cf9968", "relation": "isReferencedBy", "resource_type": "software" }
+  ]
+}
