@@ -3,6 +3,12 @@ license: cc-by-4.0
 language:
   - en
 pretty_name: FootInsights settled football predictions
+task_categories:
+  - tabular-classification
+annotations_creators:
+  - machine-generated
+source_datasets:
+  - original
 tags:
   - football
   - soccer
@@ -11,6 +17,11 @@ tags:
   - betting
   - calibration
   - model-evaluation
+  - sports-analytics
+  - football-data
+  - premier-league
+  - probabilistic-forecasting
+  - open-data
 size_categories:
   - 10K<n<100K
 configs:
