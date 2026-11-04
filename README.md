@@ -34,7 +34,7 @@ One row per settled call. Fields can be empty where a value was never recorded.
 | `away_team` | string | Away team, full name. |
 | `home_goals` | integer | Full-time home goals. |
 | `away_goals` | integer | Full-time away goals. |
-| `market` | string | Market. The model's calls: 1x2, dc (double chance), ou15/ou25/ou35 (over/under 1.5/2.5/3.5), btts, cs (correct score). The published tips: result, goals and both (the three tips frozen per match with their price), best (the Best Tip), banker and value (the Value Bet). |
+| `market` | string | Market. The model's calls: 1x2, dc (double chance), ou15/ou25/ou35 (over/under 1.5/2.5/3.5), btts, cs (correct score). The published tips: result, goals and both (the three tips frozen per match with their price), best (the Best Tip), banker and value (the Value Bet, a product retired on 4 November 2026; its settled rows stay, as every row does). |
 | `predicted` | string | Our call: home/draw/away, 1X/12/X2, over/under, yes/no, a scoreline, or market/selection for best and banker. |
 | `actual` | string | What happened, same vocabulary as predicted. |
 | `correct` | boolean | true when the call matched the outcome. |
