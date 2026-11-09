@@ -22,6 +22,17 @@ publication, misses included. Column reference: https://footinsights.com/data/
 
 The track record and calibration of the same rows: https://footinsights.com/track-record/
 
+Browse the matches behind these rows by competition:
+[Premier League](https://footinsights.com/leagues/premier-league/),
+[Championship](https://footinsights.com/leagues/championship/),
+[League One](https://footinsights.com/leagues/league-one/),
+[La Liga](https://footinsights.com/leagues/la-liga/),
+[MLS](https://footinsights.com/leagues/mls/) and
+[Liga MX](https://footinsights.com/leagues/liga-mx/).
+Tips published from the same model before kick-off, such as the
+[Daily Double](https://footinsights.com/tips/daily-double/) and the
+[Bankers](https://footinsights.com/tips/bankers/), settle into this file too.
+
 ## Columns
 
 One row per settled call. Fields can be empty where a value was never recorded.
